@@ -44,6 +44,28 @@
     opacity: 1;
 }
 
+.walletDisplay {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-900);
+    transition: background 0.2s;
+}
+
+.walletDisplay:hover {
+    background: var(--gray-100);
+}
+
+.walletDisplay i {
+    color: var(--accent);
+    font-size: 16px;
+}
+
 .cartIcon {
     position: relative;
     font-size: 20px;

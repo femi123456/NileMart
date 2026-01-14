@@ -1,95 +1,165 @@
 "use client";
 
-import styles from './page.module.css';
+import React, { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { redirect } from 'next/navigation';
+import Link from 'next/link'; // Added Link import
+import WalletDashboard from '@/components/wallet/WalletDashboard';
+import styles from './page.module.css';
 
-export default function Profile() {
+export default function ProfilePage() {
     const { data: session, status } = useSession();
-    const router = useRouter();
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('wallet');
+    const [orders, setOrders] = useState([]);
+    const [listings, setListings] = useState([]);
+    const [loadingData, setLoadingData] = useState(false);
 
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/login');
-        } else if (status === 'authenticated') {
-            fetchUserProducts();
-        }
-    }, [status, router]);
-
-    const fetchUserProducts = async () => {
+    const fetchData = async (tab) => {
+        setLoadingData(true);
         try {
-            const res = await fetch('/api/products/user');
-            const data = await res.json();
-            if (res.ok) {
-                setProducts(data);
+            if (tab === 'orders') {
+                const res = await fetch('/api/orders/my-orders');
+                const data = await res.json();
+                if (data.success) setOrders(data.data);
+            } else if (tab === 'listings') {
+                const res = await fetch('/api/products/my-listings');
+                const data = await res.json();
+                if (data.success) setListings(data.data);
             }
-        } catch (err) {
-            console.error('Failed to fetch user products');
+        } catch (error) {
+            console.error('Error fetching data:', error);
         } finally {
-            setLoading(false);
+            setLoadingData(false);
         }
     };
 
-    if (status === 'loading' || loading) return null;
+    useEffect(() => {
+        if (activeTab === 'orders' || activeTab === 'listings') {
+            fetchData(activeTab);
+        }
+    }, [activeTab]);
+
+    if (status === 'loading') return <div className="container" style={{ padding: '80px 0' }}>Loading...</div>;
+
+    if (status === 'unauthenticated') {
+        redirect('/login');
+    }
+
+    const tabs = [
+        { id: 'wallet', name: 'Wallet', icon: 'ri-wallet-line' },
+        { id: 'orders', name: 'My Orders', icon: 'ri-shopping-bag-line' },
+        { id: 'listings', name: 'My Listings', icon: 'ri-list-check' },
+        { id: 'settings', name: 'Settings', icon: 'ri-settings-3-line' },
+    ];
 
     return (
         <div className={`container ${styles.page}`}>
             <header className={styles.header}>
                 <div className={styles.userInfo}>
                     <div className={styles.avatar}>
-                        {session?.user?.name?.charAt(0) || 'U'}
+                        {session.user.name?.charAt(0) || 'U'}
                     </div>
                     <div>
-                        <h1 className={styles.name}>{session?.user?.name}</h1>
-                        <p className={styles.email}>{session?.user?.email}</p>
+                        <h1>{session.user.name}</h1>
+                        <p>{session.user.email}</p>
                     </div>
                 </div>
-                <button onClick={() => signOut()} className={styles.logoutBtn}>
-                    Sign Out
-                </button>
+                <div className={styles.headerActions}>
+                    <Link href="/sell" className="btn btn-primary" style={{ marginRight: '16px' }}>List New Item</Link>
+                    <button
+                        className={styles.logoutBtn}
+                        onClick={() => signOut({ callbackUrl: '/' })}
+                    >
+                        Sign Out
+                    </button>
+                </div>
             </header>
 
-            <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>My Listings</h2>
-                    <Link href="/sell" className="btn btn-primary btn-sm">List New Item</Link>
-                </div>
+            <div className={styles.layout}>
+                <aside className={styles.sidebar}>
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            className={`${styles.tabBtn} ${activeTab === tab.id ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            <i className={tab.icon}></i>
+                            {tab.name}
+                        </button>
+                    ))}
+                </aside>
 
-                <div className={styles.listingsGrid}>
-                    {products.length > 0 ? (
-                        products.map((product) => (
-                            <div key={product._id} className={styles.listingRow}>
-                                <div className={styles.listingImage}>
-                                    <Image
-                                        src={product.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200'}
-                                        alt={product.title}
-                                        fill
-                                        className={styles.image}
-                                    />
-                                </div>
-                                <div className={styles.listingInfo}>
-                                    <h3 className={styles.listingTitle}>{product.title}</h3>
-                                    <p className={styles.listingMeta}>{product.category} • ₦{product.price.toLocaleString()}</p>
-                                </div>
-                                <div className={styles.listingActions}>
-                                    <Link href={`/shop/${product._id}`} className={styles.viewBtn}>View</Link>
-                                    <button className={styles.deleteBtn}>Delete</button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className={styles.empty}>
-                            <p>You haven't listed any items yet.</p>
-                            <Link href="/sell" className={styles.link}>Start selling today</Link>
+                <main className={styles.content}>
+                    {activeTab === 'wallet' && <WalletDashboard />}
+
+                    {activeTab === 'orders' && (
+                        <div className={styles.listContainer}>
+                            <h2 className={styles.sectionTitle}>My Orders</h2>
+                            {loadingData ? <p>Loading orders...</p> :
+                                orders.length > 0 ? (
+                                    <div className={styles.list}>
+                                        {orders.map(order => (
+                                            <Link href={`/orders/${order._id}`} key={order._id} className={styles.listItem}>
+                                                <div className={styles.itemInfo}>
+                                                    <strong>Order #{order._id.toString().slice(-6)}</strong>
+                                                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                                                </div>
+                                                <div className={styles.itemStatus}>
+                                                    <span className={`${styles.badge} ${styles[order.status]}`}>
+                                                        {order.status.replace('_', ' ')}
+                                                    </span>
+                                                    <strong>₦{order.total.toLocaleString()}</strong>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.empty}>
+                                        <i className="ri-shopping-bag-line"></i>
+                                        <h3>No orders yet</h3>
+                                        <p>Items you buy will appear here.</p>
+                                        <Link href="/shop" className="btn btn-outline">Go Shopping</Link>
+                                    </div>
+                                )
+                            }
                         </div>
                     )}
-                </div>
-            </section>
+
+                    {activeTab === 'listings' && (
+                        <div className={styles.listContainer}>
+                            <h2 className={styles.sectionTitle}>My Listings</h2>
+                            {loadingData ? <p>Loading listings...</p> :
+                                listings.length > 0 ? (
+                                    <div className={styles.list}>
+                                        {listings.map(item => (
+                                            <div key={item._id} className={styles.listItem}>
+                                                <div className={styles.itemMain}>
+                                                    <img src={item.image} alt="" className={styles.itemImg} />
+                                                    <div className={styles.itemInfo}>
+                                                        <strong>{item.title}</strong>
+                                                        <span>{item.category}</span>
+                                                    </div>
+                                                </div>
+                                                <div className={styles.itemStatus}>
+                                                    <strong>₦{item.price.toLocaleString()}</strong>
+                                                    <Link href={`/shop/${item._id}`} className={styles.viewLink}>View</Link>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.empty}>
+                                        <i className="ri-list-check"></i>
+                                        <h3>No listings yet</h3>
+                                        <p>Items you list for sale will appear here.</p>
+                                        <Link href="/sell" className="btn btn-outline">Start Selling</Link>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )}
+                </main>
+            </div>
         </div>
     );
 }

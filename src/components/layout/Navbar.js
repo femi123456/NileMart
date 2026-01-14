@@ -3,13 +3,13 @@
 import styles from './Navbar.module.css';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCart } from '@/context/CartContext';
-import { useSession } from 'next-auth/react';
+import { useWallet } from '@/context/WalletContext';
 
 const Navbar = () => {
     const pathname = usePathname();
     const { cartCount } = useCart();
     const { status } = useSession();
+    const { balance } = useWallet();
 
     const navLinks = [
         { name: 'Shop', path: '/shop' },
@@ -26,6 +26,12 @@ const Navbar = () => {
                 </Link>
 
                 <div className={styles.links}>
+                    {status === 'authenticated' && (
+                        <Link href="/profile" className={styles.walletDisplay}>
+                            <i className="ri-wallet-3-line"></i>
+                            <span>₦{balance.toLocaleString()}</span>
+                        </Link>
+                    )}
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}

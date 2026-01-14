@@ -154,7 +154,11 @@ export default function Sell() {
                             </div>
                             {formData.image && (
                                 <div className={styles.imagePreview}>
-                                    <img src={formData.image} alt="Preview" />
+                                    <img
+                                        src={formData.image}
+                                        alt="Preview"
+                                        loading="lazy"
+                                    />
                                     <button
                                         type="button"
                                         className={styles.removeImage}

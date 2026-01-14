@@ -1,170 +1,226 @@
 "use client";
 
-import styles from './page.module.css';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import styles from './Checkout.module.css';
 
 export default function CheckoutPage() {
     const { cart, cartTotal, clearCart } = useCart();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [deliveryMethod, setDeliveryMethod] = useState('meetup');
+    const [deliveryDetails, setDeliveryDetails] = useState({
+        meetupSpot: '',
+        address: '',
+        city: '',
+        zipCode: ''
+    });
 
     useEffect(() => {
-        if (cart.length === 0 && !isSuccess) {
-            router.push('/cart');
-        }
-    }, [cart, isSuccess, router]);
+        if (status === 'unauthenticated') router.push('/login');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsProcessing(true);
-
-        const formData = new FormData(e.target);
-        const orderData = {
-            items: cart.map(item => ({
-                productId: item.id,
-                title: item.title,
-                price: item.price,
-                quantity: item.quantity,
-                image: item.image
-            })),
-            total: cartTotal,
-            buyerId: session?.user?.email || 'guest_user',
-            shippingAddress: {
-                fullName: formData.get('fullName'),
-                address: formData.get('address'),
-                city: formData.get('city'),
-                zipCode: formData.get('zipCode'),
-            }
+        const fetchWallet = async () => {
+            const res = await fetch('/api/wallet');
+            const data = await res.json();
+            if (data.success) setWalletBalance(data.data.balance);
         };
 
+        if (session) fetchWallet();
+    }, [status, session, router]);
+
+    const handleDetailsChange = (e) => {
+        setDeliveryDetails({ ...deliveryDetails, [e.target.name]: e.target.value });
+    };
+
+    const handleCheckout = async () => {
+        if (walletBalance < cartTotal) {
+            alert('Insufficient balance. Please fund your wallet in your profile.');
+            return;
+        }
+
+        setLoading(true);
         try {
-            const res = await fetch('/api/orders', {
+            const res = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData),
+                body: JSON.stringify({
+                    items: cart.map(item => ({
+                        productId: item._id,
+                        title: item.title,
+                        price: item.price,
+                        quantity: 1,
+                        image: item.image
+                    })),
+                    total: cartTotal + (deliveryMethod === 'courier' ? 500 : 0),
+                    deliveryMethod,
+                    deliveryDetails
+                })
             });
 
-            if (!res.ok) throw new Error('Order failed');
-
-            setIsSuccess(true);
-            clearCart();
+            const data = await res.json();
+            if (data.success) {
+                clearCart();
+                router.push(`/orders/${data.data._id}`);
+            } else {
+                alert(data.message || 'Checkout failed');
+            }
         } catch (error) {
-            alert('Something went wrong. Please try again.');
-            console.error(error);
+            console.error('Checkout error:', error);
         } finally {
-            setIsProcessing(false);
+            setLoading(false);
         }
     };
 
-    if (isSuccess) {
+    if (cart.length === 0) {
         return (
-            <div className="container" style={{ padding: '64px 0', textAlign: 'center' }}>
-                <div style={{ marginBottom: '24px' }}>
-                    <i className="ri-checkbox-circle-line" style={{ fontSize: '72px', color: 'var(--success)' }}></i>
-                </div>
-                <h1 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px' }}>Order Confirmed!</h1>
-                <p style={{ color: 'var(--gray-500)', maxWidth: '480px', margin: '0 auto 32px' }}>
-                    Your order details have been finalized. A confirmation email has been sent to your university account.
-                </p>
-                <Link href="/shop">
-                    <Button variant="primary">Return to Shop</Button>
-                </Link>
+            <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
+                <h2>Your cart is empty</h2>
+                <button onClick={() => router.push('/shop')} className="btn btn-primary">Go Shopping</button>
             </div>
         );
     }
 
-    if (cart.length === 0) return null;
-
     return (
-        <div className="container">
-            <header style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--foreground)' }}>Checkout</h1>
-            </header>
+        <div className={`container ${styles.page}`}>
+            <h1 className={styles.title}>Secure Checkout</h1>
 
-            <form id="checkoutForm" onSubmit={handleSubmit}>
-                <div className={styles.layout}>
-                    <div className={styles.mainCol}>
-                        <Card title="Shipping Address" subtitle="Where should we send your items?">
-                            <div className={styles.formGrid}>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <Input label="Full Recipient Name" name="fullName" placeholder="John Doe" required />
-                                </div>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <Input label="Shipping Address" name="address" placeholder="123 Campus Road" required />
-                                </div>
-                                <Input label="City Cluster" name="city" placeholder="University City" required />
-                                <Input label="Zip/Postal Code" name="zipCode" placeholder="10001" required />
-                            </div>
-                        </Card>
-
-                        <Card title="Payment Method" subtitle="Secure transaction gateway">
-                            <div className={styles.formGrid}>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <Input label="Card Identifier" placeholder="0000 0000 0000 0000" disabled value="**** **** **** 4242 (Mock)" />
-                                </div>
-                                <Input label="Expiration Sequence" placeholder="MM/YY" disabled value="12/28" />
-                                <Input label="Security Token (CVC)" placeholder="123" disabled value="***" />
-                            </div>
-                        </Card>
-                    </div>
-
-                    <div className={styles.sideCol}>
-                        <Card title="Order Summary">
-                            <div className={styles.itemsList}>
-                                {cart.map(item => (
-                                    <div key={item.id} className={styles.itemRow}>
-                                        <div className={styles.itemInfo}>
-                                            <span className={styles.itemName}>{item.title}</span>
-                                            <span className={styles.itemMeta}>QTY: {item.quantity}</span>
-                                        </div>
-                                        <span className={styles.itemPrice}>₦{(item.price * item.quantity).toLocaleString()}</span>
+            <div className={styles.layout}>
+                <div className={styles.main}>
+                    <section className={styles.section}>
+                        <h3>1. Delivery Method</h3>
+                        <div className={styles.options}>
+                            <label className={`${styles.option} ${deliveryMethod === 'meetup' ? styles.active : ''}`}>
+                                <input
+                                    type="radio"
+                                    name="deliveryMethod"
+                                    value="meetup"
+                                    checked={deliveryMethod === 'meetup'}
+                                    onChange={(e) => setDeliveryMethod(e.target.value)}
+                                />
+                                <div className={styles.optionInfo}>
+                                    <i className="ri-user-location-line"></i>
+                                    <div>
+                                        <strong>Campus Meet-up</strong>
+                                        <p>Meet seller at a safe spot on campus</p>
                                     </div>
-                                ))}
-                            </div>
+                                    <span className={styles.fee}>Free</span>
+                                </div>
+                            </label>
 
-                            <div className={styles.summaryRow}>
-                                <span>Subtotal</span>
-                                <span>₦{cartTotal.toLocaleString()}</span>
-                            </div>
-                            <div className={styles.summaryRow}>
-                                <span>Delivery</span>
-                                <span style={{ color: 'var(--green-600)' }}>Free</span>
-                            </div>
-                            <div className={styles.totalRow}>
-                                <span>Total Est.</span>
-                                <span>₦{cartTotal.toLocaleString()}</span>
-                            </div>
+                            <label className={`${styles.option} ${deliveryMethod === 'courier' ? styles.active : ''}`}>
+                                <input
+                                    type="radio"
+                                    name="deliveryMethod"
+                                    value="courier"
+                                    checked={deliveryMethod === 'courier'}
+                                    onChange={(e) => setDeliveryMethod(e.target.value)}
+                                />
+                                <div className={styles.optionInfo}>
+                                    <i className="ri-truck-line"></i>
+                                    <div>
+                                        <strong>Student Courier</strong>
+                                        <p>Delivered to your hostel/address</p>
+                                    </div>
+                                    <span className={styles.fee}>₦500</span>
+                                </div>
+                            </label>
+                        </div>
+                    </section>
 
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                style={{ width: '100%', marginTop: '24px' }}
-                                disabled={isProcessing}
-                                loading={isProcessing}
-                            >
-                                Confirm Order
-                            </Button>
-                        </Card>
-
-                        <div className={styles.securitySeal}>
-                            <i className="ri-shield-check-line"></i>
-                            <div>
-                                <strong>Secured via Student-Net</strong>
-                                <p>Encrypted peer-to-peer transaction protocol.</p>
+                    <section className={styles.section}>
+                        <h3>2. Delivery Details</h3>
+                        {deliveryMethod === 'meetup' ? (
+                            <div className={styles.inputGroup}>
+                                <label>Proposed Meet-up Spot</label>
+                                <input
+                                    type="text"
+                                    name="meetupSpot"
+                                    placeholder="e.g. Faculty of Arts Entrance"
+                                    className={styles.input}
+                                    value={deliveryDetails.meetupSpot}
+                                    onChange={handleDetailsChange}
+                                    required
+                                />
                             </div>
+                        ) : (
+                            <div className={styles.grid}>
+                                <div className={styles.inputGroup}>
+                                    <label>Hostel/Address</label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder="Hall 2, Room 405"
+                                        className={styles.input}
+                                        value={deliveryDetails.address}
+                                        onChange={handleDetailsChange}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>City/Campus Area</label>
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        placeholder="Main Campus"
+                                        className={styles.input}
+                                        value={deliveryDetails.city}
+                                        onChange={handleDetailsChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                </div>
+
+                <aside className={styles.sidebar}>
+                    <div className={styles.summaryCard}>
+                        <h3>Order Summary</h3>
+                        <div className={styles.summaryRow}>
+                            <span>Subtotal</span>
+                            <span>₦{cartTotal.toLocaleString()}</span>
+                        </div>
+                        <div className={styles.summaryRow}>
+                            <span>Delivery</span>
+                            <span>{deliveryMethod === 'meetup' ? 'Free' : '₦500'}</span>
+                        </div>
+                        <div className={`${styles.summaryRow} ${styles.totalRow}`}>
+                            <span>Total</span>
+                            <span>₦{(cartTotal + (deliveryMethod === 'courier' ? 500 : 0)).toLocaleString()}</span>
+                        </div>
+
+                        <div className={styles.paymentInfo}>
+                            <div className={styles.walletStatus}>
+                                <span>Wallet Balance:</span>
+                                <strong className={walletBalance < cartTotal ? styles.lowBalance : ''}>
+                                    ₦{walletBalance.toLocaleString()}
+                                </strong>
+                            </div>
+                            {walletBalance < cartTotal && (
+                                <p className={styles.warning}>Insufficient balance. Go to Profile to fund wallet.</p>
+                            )}
+                        </div>
+
+                        <button
+                            className={styles.payBtn}
+                            onClick={handleCheckout}
+                            disabled={loading || walletBalance < cartTotal}
+                        >
+                            {loading ? 'Processing...' : `Pay ₦${(cartTotal + (deliveryMethod === 'courier' ? 500 : 0)).toLocaleString()}`}
+                        </button>
+
+                        <div className={styles.escrowNotice}>
+                            <i className="ri-shield-check-fill"></i>
+                            <p>Your payment will be held in escrow until you confirm receiving the item.</p>
                         </div>
                     </div>
-                </div>
-            </form>
+                </aside>
+            </div>
         </div>
     );
 }

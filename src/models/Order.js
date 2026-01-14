@@ -14,18 +14,34 @@ const OrderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'processing', 'completed', 'cancelled'],
+        enum: ['pending', 'accepted', 'escrow_hold', 'on_the_way', 'delivered', 'completed', 'cancelled', 'disputed'],
         default: 'pending',
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'escrow_hold', 'released', 'refunded'],
+        default: 'pending',
+    },
+    deliveryMethod: {
+        type: String,
+        enum: ['meetup', 'courier'],
+        default: 'meetup',
     },
     buyerId: {
         type: String, // Email or User ID
         required: true,
     },
-    shippingAddress: {
-        fullName: { type: String, required: true },
-        address: { type: String, required: true },
-        city: { type: String, required: true },
-        zipCode: { type: String, required: true },
+    sellerId: {
+        type: String,
+        required: true,
+    },
+    deliveryDetails: {
+        meetupSpot: String,
+        address: String,
+        city: String,
+        zipCode: String,
+        estimatedTime: String,
+        deliveryFee: { type: Number, default: 0 }
     },
     createdAt: {
         type: Date,
