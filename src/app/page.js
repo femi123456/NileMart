@@ -89,6 +89,11 @@ export default async function Home() {
             Buy and sell textbooks, electronics, and hostel essentials with zero commission.
             Exclusively for your campus.
           </p>
+          <div className={styles.heroSearch}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <SearchBar placeholder="What are you looking for today?" />
+            </Suspense>
+          </div>
           <div className={styles.actions}>
             <Link href="/shop" className="btn btn-primary">Browse Marketplace</Link>
             <Link href="/sell" className="btn btn-secondary">Start Selling</Link>

@@ -47,6 +47,12 @@ export default async function Shop(props) {
                     <p className={styles.productCount}>{products.length} items available</p>
                 </div>
 
+                <div className={styles.searchArea}>
+                    <Suspense fallback={<div>Loading search...</div>}>
+                        <SearchBar initialValue={searchParams.q} />
+                    </Suspense>
+                </div>
+
                 <div className={styles.filters}>
                     <div className={styles.categoryList}>
                         {categories.map(cat => (
