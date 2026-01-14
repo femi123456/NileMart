@@ -34,6 +34,19 @@ export default function Sell() {
         );
     }
 
+    if (session?.user?.canPost === false) {
+        return (
+            <div className={`container ${styles.authPage}`}>
+                <div className={styles.authCard} style={{ borderColor: '#df2020' }}>
+                    <i className="ri-error-warning-line" style={{ color: '#df2020' }}></i>
+                    <h1 style={{ color: '#df2020' }}>Account Restricted</h1>
+                    <p>Your ability to post new listings has been temporarily suspended due to multiple rule violations.</p>
+                    <Link href="/shop" className="btn btn-secondary">Back to Shop</Link>
+                </div>
+            </div>
+        );
+    }
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };

@@ -34,8 +34,12 @@ const ProductSchema = new mongoose.Schema({
     sellerId: String,
     status: {
         type: String,
-        enum: ['active', 'sold', 'pending'],
-        default: 'active',
+        enum: ['approved', 'pending_review', 'deleted', 'sold', 'active', 'pending'],
+        default: 'approved',
+    },
+    reportsCount: {
+        type: Number,
+        default: 0,
     },
 }, {
     timestamps: true,

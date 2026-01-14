@@ -14,7 +14,13 @@ export async function GET(request) {
 
         // Build filter
         const filter = {};
-        if (sellerId) filter.sellerId = sellerId;
+        if (sellerId) {
+            filter.sellerId = sellerId;
+        } else {
+            // Only show approved or active products to regular users in the main shop
+            filter.status = { $in: ['approved', 'active'] };
+        }
+
         if (category) filter.category = category;
         if (q) filter.title = { $regex: q, $options: 'i' };
 

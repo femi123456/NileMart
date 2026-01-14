@@ -4,9 +4,12 @@ import styles from './ProductCard.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
+import { useState } from 'react';
+import ReportModal from './ReportModal';
 
 export default function ProductCard({ product }) {
     const { addToCart } = useCart();
+    const [showReportModal, setShowReportModal] = useState(false);
     const { _id, id, title, price, category, image, seller } = product;
     const productId = _id || id;
 
@@ -23,6 +26,16 @@ export default function ProductCard({ product }) {
                         unoptimized={image?.startsWith('data:') || image?.includes('gstatic.com') || image?.includes('tbn:')}
                     />
                     <div className={styles.categoryBadge}>{category}</div>
+                    <button
+                        className={styles.reportBtn}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowReportModal(true);
+                        }}
+                    >
+                        <i className="ri-flag-line"></i> Report
+                    </button>
                 </div>
             </Link>
 
@@ -46,6 +59,12 @@ export default function ProductCard({ product }) {
                     Add to Cart
                 </button>
             </div>
+            {showReportModal && (
+                <ReportModal
+                    productId={productId}
+                    onClose={() => setShowReportModal(false)}
+                />
+            )}
         </div>
     );
 }

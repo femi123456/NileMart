@@ -26,6 +26,14 @@ const UserSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user',
     },
+    strikeCount: {
+        type: Number,
+        default: 0,
+    },
+    canPost: {
+        type: Boolean,
+        default: true,
+    },
 }, {
     timestamps: true,
 });
