@@ -33,6 +33,26 @@ export default function ProfilePage() {
         }
     };
 
+    const handleDeleteListing = async (productId) => {
+        if (!window.confirm("Are you sure you want to delete this item? This action cannot be undone.")) return;
+
+        try {
+            const res = await fetch(`/api/products/${productId}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (data.success) {
+                // Refresh listings
+                fetchData('listings');
+            } else {
+                alert(data.message || 'Failed to delete item');
+            }
+        } catch (error) {
+            console.error('Error deleting listing:', error);
+            alert('Something went wrong. Please try again.');
+        }
+    };
+
     useEffect(() => {
         if (activeTab === 'orders' || activeTab === 'listings') {
             fetchData(activeTab);
@@ -142,7 +162,15 @@ export default function ProfilePage() {
                                                 </div>
                                                 <div className={styles.itemStatus}>
                                                     <strong>₦{item.price.toLocaleString()}</strong>
-                                                    <Link href={`/shop/${item._id}`} className={styles.viewLink}>View</Link>
+                                                    <div className={styles.itemActions}>
+                                                        <Link href={`/shop/${item._id}`} className={styles.viewLink}>View</Link>
+                                                        <button
+                                                            onClick={() => handleDeleteListing(item._id)}
+                                                            className={styles.deleteLink}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

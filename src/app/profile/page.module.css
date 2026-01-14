@@ -198,10 +198,26 @@
     color: var(--gray-600);
 }
 
+.itemActions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 .viewLink {
     font-size: 13px;
     font-weight: 700;
     color: var(--accent);
+}
+
+.deleteLink {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f43f5e;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 @media (max-width: 900px) {
