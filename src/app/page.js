@@ -4,6 +4,8 @@ import Link from 'next/link';
 import ProductCard from '@/components/product/ProductCard';
 import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
+import SearchBar from '@/components/product/SearchBar';
+import { Suspense } from 'react';
 
 async function getProducts() {
   try {
