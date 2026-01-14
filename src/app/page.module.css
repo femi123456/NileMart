@@ -36,6 +36,7 @@
     margin-bottom: 32px;
     width: 100%;
     max-width: 600px;
+    margin-inline: auto;
 }
 
 .actions {
