@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import Link from 'next/link'; // Added Link import
+import Link from 'next/link';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import styles from './page.module.css';
 
@@ -85,12 +85,14 @@ export default function ProfilePage() {
                     </div>
                 </div>
                 <div className={styles.headerActions}>
-                    <Link href="/sell" className="btn btn-primary" style={{ marginRight: '16px' }}>List New Item</Link>
+                    <Link href="/sell" className="btn btn-primary" style={{ marginRight: '16px' }}>
+                        <i className="ri-add-line"></i> List New Item
+                    </Link>
                     <button
                         className={styles.logoutBtn}
                         onClick={() => signOut({ callbackUrl: '/' })}
                     >
-                        Sign Out
+                        <i className="ri-logout-box-r-line"></i> <span>Sign Out</span>
                     </button>
                 </div>
             </header>
@@ -163,12 +165,14 @@ export default function ProfilePage() {
                                                 <div className={styles.itemStatus}>
                                                     <strong>₦{item.price.toLocaleString()}</strong>
                                                     <div className={styles.itemActions}>
-                                                        <Link href={`/shop/${item._id}`} className={styles.viewLink}>View</Link>
+                                                        <Link href={`/shop/${item._id}`} className={styles.viewLink}>
+                                                            <i className="ri-eye-line"></i> View
+                                                        </Link>
                                                         <button
                                                             onClick={() => handleDeleteListing(item._id)}
                                                             className={styles.deleteLink}
                                                         >
-                                                            Delete
+                                                            <i className="ri-delete-bin-line"></i> Delete
                                                         </button>
                                                     </div>
                                                 </div>

@@ -48,10 +48,29 @@
 }
 
 .logoutBtn {
-    padding: 8px 16px;
-    color: var(--danger);
+    padding: 10px 18px;
+    background: #fff5f5;
+    color: #ff4d4f;
+    border: 1px solid #ffa39e;
+    border-radius: 12px;
     font-weight: 600;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+    background: #ff4d4f;
+    color: white;
+    border-color: #ff4d4f;
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.2);
+}
+
+.logoutBtn i {
+    font-size: 18px;
 }
 
 .headerActions {
@@ -200,24 +219,42 @@
 
 .itemActions {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     align-items: center;
 }
 
 .viewLink {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
 }
 
 .deleteLink {
-    font-size: 13px;
-    font-weight: 700;
-    color: #f43f5e;
-    background: none;
-    border: none;
-    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ff4d4f;
+    background: #fff5f5;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.deleteLink:hover {
+    background: #ff4d4f;
+    color: white;
+}
+
+.deleteLink i {
+    font-size: 16px;
 }
 
 @media (max-width: 900px) {
