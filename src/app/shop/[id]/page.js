@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
-import AddToCartButton from './AddToCartButton';
+import ProductDetailActions from '@/components/product/ProductDetailActions';
 
 async function getProduct(id) {
+    if (!id || id === 'undefined') return null;
     try {
         await dbConnect();
         const product = await Product.findById(id).lean();
@@ -19,6 +20,7 @@ async function getProduct(id) {
             updatedAt: product.updatedAt?.toISOString(),
         };
     } catch (error) {
+        console.error('Error fetching product:', error);
         return null;
     }
 }
@@ -26,7 +28,8 @@ async function getProduct(id) {
 export const dynamic = 'force-dynamic';
 
 export default async function ProductPage({ params }) {
-    const product = await getProduct(params.id);
+    const { id } = await params;
+    const product = await getProduct(id);
 
     if (!product) {
         notFound();
@@ -72,7 +75,7 @@ export default async function ProductPage({ params }) {
                     </div>
 
                     <div className={styles.actions}>
-                        <AddToCartButton product={product} />
+                        <ProductDetailActions product={product} />
                         <div className={styles.guarantee}>
                             <i className="ri-shield-check-line"></i>
                             <span>Safe campus pickup guaranteed</span>

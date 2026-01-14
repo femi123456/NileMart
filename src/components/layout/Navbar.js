@@ -14,8 +14,9 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Shop', path: '/shop' },
         { name: 'Sell', path: '/sell' },
+        { name: status === 'authenticated' ? 'Messages' : '', path: status === 'authenticated' ? '/messages' : '' },
         { name: status === 'authenticated' ? 'Profile' : 'Sign In', path: status === 'authenticated' ? '/profile' : '/login' },
-    ];
+    ].filter(link => link.name !== '');
 
     return (
         <nav className={styles.navbar}>
