@@ -9,10 +9,14 @@ export async function GET(request) {
         await dbConnect();
         const { searchParams } = new URL(request.url);
         const sellerId = searchParams.get('sellerId');
+        const category = searchParams.get('category');
+        const q = searchParams.get('q');
 
         // Build filter
         const filter = {};
         if (sellerId) filter.sellerId = sellerId;
+        if (category) filter.category = category;
+        if (q) filter.title = { $regex: q, $options: 'i' };
 
         const products = await Product.find(filter).sort({ createdAt: -1 });
         return NextResponse.json({ success: true, data: products });

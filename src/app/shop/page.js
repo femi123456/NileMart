@@ -32,7 +32,8 @@ async function getProducts(searchParams) {
 
 export const dynamic = 'force-dynamic';
 
-export default async function Shop({ searchParams }) {
+export default async function Shop(props) {
+    const searchParams = await props.searchParams;
     const products = await getProducts(searchParams);
     const categories = ['All', 'Textbooks', 'Electronics', 'Hostel', 'Fashion', 'Sports', 'Others'];
 
@@ -53,7 +54,7 @@ export default async function Shop({ searchParams }) {
                                 key={cat}
                                 href={`/shop${cat === 'All' ? '' : `?category=${cat}`}`}
                                 className={`${styles.categoryTab} ${(searchParams.category === cat || (!searchParams.category && cat === 'All'))
-                                        ? styles.activeTab : ''
+                                    ? styles.activeTab : ''
                                     }`}
                             >
                                 {cat}
