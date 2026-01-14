@@ -2,7 +2,7 @@
 
 import styles from './Navbar.module.css';
 import Link from 'next/link';
-import { usePathname } from 'next-auth/next';
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useSession } from 'next-auth/react';
 import { useWallet } from '@/context/WalletContext';
