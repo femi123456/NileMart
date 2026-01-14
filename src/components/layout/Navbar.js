@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useSession } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
-import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
     const pathname = usePathname();
