@@ -77,11 +77,11 @@ export default function ProfilePage() {
             <header className={styles.header}>
                 <div className={styles.userInfo}>
                     <div className={styles.avatar}>
-                        {session.user.name?.charAt(0) || 'U'}
+                        {session?.user?.name?.charAt(0) || 'U'}
                     </div>
                     <div>
-                        <h1>{session.user.name}</h1>
-                        <p>{session.user.email}</p>
+                        <h1>{session?.user?.name}</h1>
+                        <p>{session?.user?.email}</p>
                     </div>
                 </div>
                 <div className={styles.headerActions}>
