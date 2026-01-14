@@ -29,40 +29,42 @@ const Navbar = () => {
                     <span className={styles.logoText}>Nile Mart</span>
                 </Link>
 
-                <div className={styles.navActions}>
-                    <Link href="/cart" className={styles.cartIcon}>
-                        <i className="ri-shopping-bag-line"></i>
-                        {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
-                    </Link>
+                <div className={styles.rightSide}>
+                    <div className={`${styles.links} ${isMenuOpen ? styles.menuOpen : ''}`}>
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.path}
+                                className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                    </div>
 
-                    {status === 'authenticated' && (
-                        <Link href="/profile" className={`${styles.navLink} ${styles.avatarLink} ${pathname === '/profile' ? styles.active : ''}`}>
-                            <div className={styles.avatarCircle}>
-                                {userInitial}
-                            </div>
+                    <div className={styles.navActions}>
+                        <Link href="/cart" className={styles.cartIcon}>
+                            <i className="ri-shopping-bag-line"></i>
+                            {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
                         </Link>
-                    )}
 
-                    <button
-                        className={styles.menuToggle}
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        aria-label="Toggle menu"
-                    >
-                        <i className={isMenuOpen ? "ri-close-line" : "ri-menu-line"}></i>
-                    </button>
-                </div>
+                        {status === 'authenticated' && (
+                            <Link href="/profile" className={`${styles.navLink} ${styles.avatarLink} ${pathname === '/profile' ? styles.active : ''}`}>
+                                <div className={styles.avatarCircle}>
+                                    {userInitial}
+                                </div>
+                            </Link>
+                        )}
 
-                <div className={`${styles.links} ${isMenuOpen ? styles.menuOpen : ''}`}>
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.path}
-                            className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
-                            onClick={() => setIsMenuOpen(false)}
+                        <button
+                            className={styles.menuToggle}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Toggle menu"
                         >
-                            {link.name}
-                        </Link>
-                    ))}
+                            <i className={isMenuOpen ? "ri-close-line" : "ri-menu-line"}></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>

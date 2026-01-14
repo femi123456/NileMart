@@ -18,6 +18,12 @@
     width: 100%;
 }
 
+.rightSide {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
 .logoText {
     font-size: 20px;
     font-weight: 700;
