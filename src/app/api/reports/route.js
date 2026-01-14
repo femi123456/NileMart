@@ -5,6 +5,30 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export async function GET(request) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role !== 'admin') {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        await dbConnect();
+        const { searchParams } = new URL(request.url);
+        const productId = searchParams.get('productId');
+
+        const filter = {};
+        if (productId) filter.productId = productId;
+
+        const reports = await Report.find(filter)
+            .populate('reportedByUserId', 'name')
+            .sort({ createdAt: -1 });
+
+        return NextResponse.json({ success: true, data: reports });
+    } catch (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    }
+}
+
 export async function POST(request) {
     try {
         const session = await getServerSession(authOptions);
