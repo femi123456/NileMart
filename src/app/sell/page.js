@@ -125,16 +125,45 @@ export default function Sell() {
                         </div>
 
                         <div className={styles.inputGroup}>
-                            <label>Image URL</label>
-                            <input
-                                type="url"
-                                name="image"
-                                placeholder="https://images.unsplash.com/..."
-                                className={styles.input}
-                                value={formData.image}
-                                onChange={handleChange}
-                                required
-                            />
+                            <label>Product Image</label>
+                            <div className={styles.imageOptions}>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className={styles.fileInput}
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setFormData({ ...formData, image: reader.result });
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                                <div className={styles.divider}>OR</div>
+                                <input
+                                    type="url"
+                                    name="image"
+                                    placeholder="Paste Image URL (e.g. https://...)"
+                                    className={styles.input}
+                                    value={formData.image.startsWith('data:') ? '' : formData.image}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            {formData.image && (
+                                <div className={styles.imagePreview}>
+                                    <img src={formData.image} alt="Preview" />
+                                    <button
+                                        type="button"
+                                        className={styles.removeImage}
+                                        onClick={() => setFormData({ ...formData, image: '' })}
+                                    >
+                                        <i className="ri-close-line"></i>
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div className={styles.inputGroup}>

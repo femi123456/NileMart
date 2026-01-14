@@ -46,6 +46,7 @@ export default async function ProductPage({ params }) {
                             fill
                             className={styles.image}
                             priority
+                            unoptimized={product.image?.startsWith('data:')}
                         />
                     </div>
                 </div>
