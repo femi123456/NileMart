@@ -1,6 +1,7 @@
 import dbConnect from '@/lib/mongodb';
 import Report from '@/models/Report';
 import Product from '@/models/Product';
+import User from '@/models/User';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";

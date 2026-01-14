@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 const Navbar = () => {
     const pathname = usePathname();
     const { cartCount } = useCart();
     const { data: session, status } = useSession();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const navLinks = [
         { name: 'Shop', path: '/shop' },
@@ -27,16 +29,12 @@ const Navbar = () => {
                     <span className={styles.logoText}>Nile Mart</span>
                 </Link>
 
-                <div className={styles.links}>
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.path}
-                            className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
-                        >
-                            {link.name}
-                        </Link>
-                    ))}
+                <div className={styles.navActions}>
+                    <Link href="/cart" className={styles.cartIcon}>
+                        <i className="ri-shopping-bag-line"></i>
+                        {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
+                    </Link>
+
                     {status === 'authenticated' && (
                         <Link href="/profile" className={`${styles.navLink} ${styles.avatarLink} ${pathname === '/profile' ? styles.active : ''}`}>
                             <div className={styles.avatarCircle}>
@@ -44,10 +42,27 @@ const Navbar = () => {
                             </div>
                         </Link>
                     )}
-                    <Link href="/cart" className={styles.cartIcon}>
-                        <i className="ri-shopping-bag-line"></i>
-                        {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
-                    </Link>
+
+                    <button
+                        className={styles.menuToggle}
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        <i className={isMenuOpen ? "ri-close-line" : "ri-menu-line"}></i>
+                    </button>
+                </div>
+
+                <div className={`${styles.links} ${isMenuOpen ? styles.menuOpen : ''}`}>
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.name}
+                            href={link.path}
+                            className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
                 </div>
             </div>
         </nav>

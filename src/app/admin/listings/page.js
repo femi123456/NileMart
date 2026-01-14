@@ -16,7 +16,12 @@ async function getListings(statusFilter) {
         }
     }
     const listings = await Product.find(filter).sort({ reportsCount: -1, createdAt: -1 }).lean();
-    return listings.map(l => ({ ...l, _id: l._id.toString() }));
+    return listings.map(l => ({
+        ...l,
+        _id: l._id.toString(),
+        createdAt: l.createdAt?.toISOString(),
+        updatedAt: l.updatedAt?.toISOString()
+    }));
 }
 
 export default async function ListingsManager({ searchParams }) {

@@ -109,8 +109,64 @@
     border-radius: var(--radius-full);
 }
 
-@media (max-width: 600px) {
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.menuToggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--foreground);
+    cursor: pointer;
+    padding: 4px;
+}
+
+@media (max-width: 768px) {
+    .menuToggle {
+        display: block;
+    }
+
     .links {
-        gap: 16px;
+        position: absolute;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid var(--glass-border);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menuOpen {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .navLink {
+        font-size: 16px;
+        width: 100%;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--gray-50);
+    }
+
+    .navLink:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .navActions {
+        gap: 12px;
     }
 }
