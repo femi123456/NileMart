@@ -326,18 +326,59 @@
 }
 
 @media (max-width: 768px) {
+    .chatContainer {
+        height: calc(100vh - 60px);
+        /* Mobile header height */
+        position: relative;
+        overflow: hidden;
+    }
+
     .chatSidebar {
         width: 100%;
         position: absolute;
         inset: 0;
         z-index: 20;
+        transition: transform 0.3s ease;
     }
 
     .sidebarHidden {
-        display: none;
+        transform: translateX(-100%);
+        pointer-events: none;
     }
 
     .chatMain {
         width: 100%;
+        height: 100%;
     }
+
+    .backBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        margin-right: -8px;
+        background: none;
+        border: none;
+        color: var(--gray-600);
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .chatHeaderBar {
+        padding: 12px 16px;
+    }
+
+    .headerText h3 {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobileHidden {
+        display: none !important;
+    }
+}
+
+.backBtn {
+    display: none;
 }

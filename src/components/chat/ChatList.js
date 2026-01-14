@@ -11,7 +11,7 @@ const ChatList = () => {
 
     if (!chats || chats.length === 0) {
         return (
-            <div className={styles.emptyList}>
+            <div className={`${styles.emptyList} ${activeChat ? styles.sidebarHidden : ''}`}>
                 <i className="ri-chat-history-line"></i>
                 <p>No conversations yet</p>
             </div>
@@ -19,7 +19,7 @@ const ChatList = () => {
     }
 
     return (
-        <div className={styles.chatList}>
+        <div className={`${styles.chatList} ${activeChat ? styles.sidebarHidden : ''}`}>
             <h2 className={styles.listTitle}>Messages</h2>
             <div className={styles.listItems}>
                 {chats.map((chat) => {

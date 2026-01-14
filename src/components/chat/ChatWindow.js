@@ -27,7 +27,7 @@ const ChatWindow = () => {
 
     if (!activeChat) {
         return (
-            <div className={styles.emptyState}>
+            <div className={`${styles.emptyState} ${styles.mobileHidden}`}>
                 <i className="ri-message-3-line"></i>
                 <h2>Select a chat to start messaging</h2>
                 <p>Choose a conversation from the list on the left.</p>
@@ -40,6 +40,13 @@ const ChatWindow = () => {
     return (
         <div className={styles.chatMain}>
             <div className={styles.chatHeaderBar}>
+                <button
+                    className={styles.backBtn}
+                    onClick={() => setActiveChat(null)}
+                    aria-label="Back to messages"
+                >
+                    <i className="ri-arrow-left-s-line"></i>
+                </button>
                 <div className={styles.headerProductInfo}>
                     {product.image && <img src={product.image} className={styles.headerThumb} alt="" />}
                     <div className={styles.headerText}>
