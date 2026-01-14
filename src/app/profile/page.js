@@ -147,47 +147,81 @@ export default function ProfilePage() {
                         </div>
                     )}
 
-                    {activeTab === 'listings' && (
-                        <div className={styles.listContainer}>
-                            <h2 className={styles.sectionTitle}>My Listings</h2>
-                            {loadingData ? <p>Loading listings...</p> :
-                                listings.length > 0 ? (
-                                    <div className={styles.list}>
-                                        {listings.map(item => (
-                                            <div key={item._id} className={styles.listItem}>
-                                                <div className={styles.itemMain}>
-                                                    <img src={item.image} alt="" className={styles.itemImg} />
-                                                    <div className={styles.itemInfo}>
-                                                        <strong>{item.title}</strong>
-                                                        <span>{item.category}</span>
-                                                    </div>
-                                                </div>
-                                                <div className={styles.itemStatus}>
-                                                    <strong>₦{item.price.toLocaleString()}</strong>
-                                                    <div className={styles.itemActions}>
-                                                        <Link href={`/shop/${item._id}`} className={styles.viewLink}>
-                                                            <i className="ri-eye-line"></i> View
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDeleteListing(item._id)}
-                                                            className={styles.deleteLink}
-                                                        >
-                                                            <i className="ri-delete-bin-line"></i> Delete
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                    {activeTab === 'settings' && (
+                        <div className={styles.settingsContainer}>
+                            <h2 className={styles.sectionTitle}>Settings</h2>
+
+                            <div className={styles.settingsSection}>
+                                <h3><i className="ri-user-settings-line"></i> Profile Information</h3>
+                                <div className={styles.formGroup}>
+                                    <label>Display Name</label>
+                                    <input
+                                        type="text"
+                                        className={styles.formInput}
+                                        defaultValue={session?.user?.name}
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Email Address</label>
+                                    <input
+                                        type="email"
+                                        className={styles.formInput}
+                                        defaultValue={session?.user?.email}
+                                        disabled
+                                    />
+                                    <p style={{ fontSize: '12px', color: '#8e8e93', marginTop: '4px' }}>
+                                        Email cannot be changed for security reasons.
+                                    </p>
+                                </div>
+                                <button className="btn btn-primary" onClick={() => alert('Profile updated!')}>
+                                    Save Changes
+                                </button>
+                            </div>
+
+                            <div className={styles.settingsSection}>
+                                <h3><i className="ri-building-4-line"></i> Campus Details</h3>
+                                <div className={styles.formGroup}>
+                                    <label>Main Campus</label>
+                                    <input
+                                        type="text"
+                                        className={styles.formInput}
+                                        placeholder="e.g. University of Lagos"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Hostel / Apartment</label>
+                                    <input
+                                        type="text"
+                                        className={styles.formInput}
+                                        placeholder="e.g. Jaja Hall"
+                                    />
+                                </div>
+                                <div className={styles.settingsRow}>
+                                    <div className={styles.settingsRowText}>
+                                        <strong>Verification Status</strong>
+                                        <p>Verify your student ID for higher trust scores.</p>
                                     </div>
-                                ) : (
-                                    <div className={styles.empty}>
-                                        <i className="ri-list-check"></i>
-                                        <h3>No listings yet</h3>
-                                        <p>Items you list for sale will appear here.</p>
-                                        <Link href="/sell" className="btn btn-outline">Start Selling</Link>
+                                    <span className={styles.badge_verified}>Verified Student</span>
+                                </div>
+                            </div>
+
+                            <div className={styles.settingsSection}>
+                                <h3><i className="ri-notification-3-line"></i> Notifications</h3>
+                                <div className={styles.settingsRow}>
+                                    <div className={styles.settingsRowText}>
+                                        <strong>Order Updates</strong>
+                                        <p>Receive alerts when your order status changes.</p>
                                     </div>
-                                )
-                            }
+                                    <input type="checkbox" defaultChecked />
+                                </div>
+                                <div className={styles.settingsRow}>
+                                    <div className={styles.settingsRowText}>
+                                        <strong>Chat Messages</strong>
+                                        <p>Get notified when a buyer or seller messages you.</p>
+                                    </div>
+                                    <input type="checkbox" defaultChecked />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </main>
