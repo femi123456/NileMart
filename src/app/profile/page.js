@@ -147,6 +147,50 @@ export default function ProfilePage() {
                         </div>
                     )}
 
+                    {activeTab === 'listings' && (
+                        <div className={styles.listContainer}>
+                            <h2 className={styles.sectionTitle}>My Listings</h2>
+                            {loadingData ? <p>Loading listings...</p> :
+                                listings.length > 0 ? (
+                                    <div className={styles.list}>
+                                        {listings.map(item => (
+                                            <div key={item._id} className={styles.listItem}>
+                                                <div className={styles.itemMain}>
+                                                    <img src={item.image} alt="" className={styles.itemImg} />
+                                                    <div className={styles.itemInfo}>
+                                                        <strong>{item.title}</strong>
+                                                        <span>{item.category}</span>
+                                                    </div>
+                                                </div>
+                                                <div className={styles.itemStatus}>
+                                                    <strong>₦{item.price.toLocaleString()}</strong>
+                                                    <div className={styles.itemActions}>
+                                                        <Link href={`/shop/${item._id}`} className={styles.viewLink}>
+                                                            <i className="ri-eye-line"></i> View
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDeleteListing(item._id)}
+                                                            className={styles.deleteLink}
+                                                        >
+                                                            <i className="ri-delete-bin-line"></i> Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.empty}>
+                                        <i className="ri-list-check"></i>
+                                        <h3>No listings yet</h3>
+                                        <p>Items you list for sale will appear here.</p>
+                                        <Link href="/sell" className="btn btn-outline">Start Selling</Link>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )}
+
                     {activeTab === 'settings' && (
                         <div className={styles.settingsContainer}>
                             <h2 className={styles.sectionTitle}>Settings</h2>
