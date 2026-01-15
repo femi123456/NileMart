@@ -69,12 +69,3 @@ This leads to:
 
 - **Admin Dashboard**  
   User management, listing moderation, and report handling.
-
----
-
-## 📦 Installation
-
-```bash
-git clone https://github.com/your-username/nile-mart.git
-cd nile-mart
-npm install
