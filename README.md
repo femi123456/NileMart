@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nile Mart 🛒
 
-## Getting Started
+Nile Mart is a premium, student-focused multi-vendor e-commerce platform built to make buying and selling within schools and universities safe, organized, and modern.
 
-First, run the development server:
+It solves the problem of scattered and risky student trading on WhatsApp and social media by providing a centralized marketplace with structure, trust, and real features. Students can browse products, add items to a cart, pay using an internal wallet, and chat with sellers in real time. Sellers manage listings and orders, while admins moderate content and ensure platform safety.
+
+---
+
+## 🚀 Features
+
+- 🔐 Secure authentication with **NextAuth**
+- 🛍️ Multi-vendor marketplace (buyers & sellers)
+- 🛒 Persistent shopping cart
+- 💰 Internal wallet system for cashless payments
+- 💬 Real-time buyer–seller chat using **Pusher**
+- 🛡️ Admin moderation & reporting system
+- 📱 Mobile-first, premium UI inspired by Apple & Stripe
+- ⚡ Optimized performance with Next.js (SSR/ISR)
+
+---
+
+## 🧠 Problem It Solves
+
+Students usually trade through:
+- WhatsApp groups  
+- Instagram posts  
+- Word of mouth  
+
+This leads to:
+- Scams and fake listings  
+- Lost messages  
+- No payment security  
+- No order tracking  
+- No moderation  
+
+**Nile Mart** replaces this chaos with a structured, secure, and professional marketplace built specifically for students.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Technology |
+|-------------|------------|
+| Frontend    | Next.js 16 (React 19) |
+| Styling     | Vanilla CSS (Global & Modules) |
+| Database    | MongoDB (Mongoose) |
+| Auth        | NextAuth.js |
+| Real-Time   | Pusher (WebSockets) |
+| Icons       | Remix Icon |
+
+---
+
+## 🏗️ Core Modules
+
+- **Authentication System**  
+  Secure login & signup with session management.
+
+- **Marketplace Engine**  
+  Product listings, categories, search, and product pages.
+
+- **Wallet System**  
+  Internal digital wallet for purchases, with transaction history and overdraft protection.
+
+- **Order System**  
+  Converts cart into orders after successful wallet payment.
+
+- **Real-Time Chat**  
+  Direct messaging between buyers and sellers.
+
+- **Admin Dashboard**  
+  User management, listing moderation, and report handling.
+
+---
+
+## 📦 Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/your-username/nile-mart.git
+cd nile-mart
+npm install
